@@ -1,0 +1,18 @@
+debug: true
+
+mysql:
+  host: YOUR_MYSQL_HOST
+  username: YOUR_MYSQL_USER
+  password: YOUR_MYSQL_PASSWD
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 时区、编码、批量处理等
+    url: jdbc:mysql://${mysql.host}:3306/javaweb_recruitment?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT&rewriteBatchedStatements=true
+    username: ${mysql.username}
+    password: ${mysql.password}
+    
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -29,6 +29,7 @@ HELP.md
 mvnw
 mvnw.*
 *.iml
+target/
 
 # app
 application.yml
