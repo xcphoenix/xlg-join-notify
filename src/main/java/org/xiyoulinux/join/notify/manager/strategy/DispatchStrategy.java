@@ -1,11 +1,11 @@
 package org.xiyoulinux.join.notify.manager.strategy;
 
-import lombok.NonNull;
+import com.sun.istack.internal.NotNull;
 import org.xiyoulinux.join.notify.model.dao.Invitation;
 import org.xiyoulinux.join.notify.model.dao.Join;
+import org.xiyoulinux.join.notify.model.dao.Sender;
 import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
 import org.xiyoulinux.join.notify.model.strategy.StrategyType;
-import org.xiyoulinux.join.notify.model.dao.Sender;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public interface DispatchStrategy {
      */
     List<Invitation> dispatch(List<Sender> senderList,
                               List<Join> joinList,
-                              @NonNull StrategyConfig strategyConfig
+                              @NotNull StrategyConfig strategyConfig
     );
 
     /**

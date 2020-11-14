@@ -21,10 +21,15 @@ public class StrategyManager {
 
     public DispatchStrategy getStrategy(StrategyType type) {
         if (type2Strategy == null) {
-            Map<String, DispatchStrategy> strategyMap = SpringUtils.getApplicationContext()
-                    .getBeansOfType(DispatchStrategy.class);
-            type2Strategy = new HashMap<>(strategyMap.size());
-            strategyMap.values().forEach(dispatchStrategy -> type2Strategy.put(dispatchStrategy.getType(), dispatchStrategy));
+            synchronized (this) {
+                if (type2Strategy == null) {
+                    Map<String, DispatchStrategy> strategyMap = SpringUtils.getApplicationContext()
+                            .getBeansOfType(DispatchStrategy.class);
+                    Map<StrategyType, DispatchStrategy> tmpMap = new HashMap<>(strategyMap.size());
+                    strategyMap.values().forEach(dispatchStrategy -> tmpMap.put(dispatchStrategy.getType(), dispatchStrategy));
+                    type2Strategy = tmpMap;
+                }
+            }
         }
         if (type2Strategy.containsKey(type)) {
             return type2Strategy.get(type);
