@@ -1,7 +1,7 @@
 package org.xiyoulinux.join.notify.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.xiyoulinux.join.notify.model.dao.Config;
+import org.xiyoulinux.join.notify.model.po.Config;
 
 /**
  * @author xuanc

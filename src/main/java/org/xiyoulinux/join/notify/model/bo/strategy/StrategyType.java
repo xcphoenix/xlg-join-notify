@@ -28,4 +28,15 @@ public enum StrategyType {
         this.desc = desc;
     }
 
+    public static StrategyType fromType(Integer type) {
+        if (type != null) {
+            for (StrategyType strategyType : StrategyType.values()) {
+                if (strategyType.getType() == type) {
+                    return strategyType;
+                }
+            }
+        }
+        throw new IllegalArgumentException("invalid strategy type : " + type);
+    }
+
 }

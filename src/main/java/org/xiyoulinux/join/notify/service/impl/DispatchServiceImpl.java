@@ -1,21 +1,21 @@
 package org.xiyoulinux.join.notify.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xiyoulinux.join.notify.manager.strategy.DispatchStrategy;
 import org.xiyoulinux.join.notify.manager.strategy.StrategyManager;
-import org.xiyoulinux.join.notify.model.InviteStatus;
-import org.xiyoulinux.join.notify.model.RespCode;
-import org.xiyoulinux.join.notify.model.dao.Invitation;
-import org.xiyoulinux.join.notify.model.dao.Join;
-import org.xiyoulinux.join.notify.model.dao.Sender;
-import org.xiyoulinux.join.notify.model.dto.Result;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.InviteStatus;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.dto.result.RespCode;
+import org.xiyoulinux.join.notify.model.dto.result.Result;
+import org.xiyoulinux.join.notify.model.po.Invitation;
+import org.xiyoulinux.join.notify.model.po.Join;
+import org.xiyoulinux.join.notify.model.po.Sender;
 import org.xiyoulinux.join.notify.service.*;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -40,29 +40,60 @@ public class DispatchServiceImpl implements DispatchService {
 
     private final ConfigService configService;
 
-    private final JoinService joinService;
-
     public DispatchServiceImpl(InvitationService invitationService, SenderService senderService, StrategyManager strategyManager,
                                ConfigService configService, JoinService joinService) {
         this.invitationService = invitationService;
         this.senderService = senderService;
         this.strategyManager = strategyManager;
         this.configService = configService;
-        this.joinService = joinService;
     }
 
     @Override
     @Transactional
-    public List<Invitation> previewDispatch() {
+    public Result<Boolean> dispatch() {
+        StrategyConfig config = configService.getStrategyCfg(true);
+        if (invitationService.countByStatus(config.getProcessId(), InviteStatus.INIT) <= 0) {
+            return Result.<Boolean>builder(null).fromResp(RespCode.DISPATCH_NOT_FOUND);
+        }
+        // NOTE 理论上需要校验
+        invitationService.updateStatus(config.getProcessId(), InviteStatus.INIT, InviteStatus.NOT_NOTIFY);
+        return Result.builder(true).success();
+    }
+
+    @Override
+    @Transactional
+    public Result<Boolean> resetDispatch() {
+        StrategyConfig config = configService.getStrategyCfg(true);
+        Integer processId = config.getProcessId();
+        if (invitationService.hasUnsettled(null, processId)) {
+            return Result.<Boolean>builder(null).fromResp(RespCode.ALL_UNSETTLED);
+        }
+        // 删除所有的
+        invitationService.clean(new Invitation().setProcessId(processId));
+        return Result.builder(true).success();
+    }
+
+    @Override
+    @Transactional
+    public Result<Boolean> preview(List<Long> specialSenderIds) {
         StrategyConfig config = configService.getStrategyCfg(true);
 
-        // get joins, sender
-        final List<Sender> senders = senderService.getSenderList();
-        List<Join> joins = joinService.getJoinByProcessId(config.getProcessId());
-        if (ToolUtils.isEmptyCollection(senders, joins)) {
-            log.warn("senders empty or joins empty");
-            return Collections.emptyList();
+        // 获取发送者
+        List<Sender> senders;
+        final List<Sender> existSenders = senderService.getSenderList();
+        if (CollectionUtils.isEmpty(specialSenderIds)) {
+            senders = existSenders;
+        } else {
+            // 只获取存在的发送者信息
+            senders = existSenders.stream().filter(
+                    sender -> specialSenderIds.contains(sender.getId())
+            ).collect(Collectors.toList());
         }
+
+        // 获取未处理的邀请
+        List<Join> joins = ToolUtils.pageOperation(
+                (cur, size) -> invitationService.getUnDispatchJoin(config.getProcessId(), cur, size).getData()
+        );
 
         // filter
         final String[] blackRegexes = config.parseBlackRegexes();
@@ -81,39 +112,18 @@ public class DispatchServiceImpl implements DispatchService {
             ).collect(Collectors.toList());
         }
 
+        if (ToolUtils.isEmptyCollection(senders, joins)) {
+            return Result.<Boolean>builder().fromResp(RespCode.SENDER_OR_JOIN_NOT_FOUND);
+        }
+
         // dispatch
         DispatchStrategy strategy = strategyManager.getStrategy(config.getStrategyType());
         ToolUtils.argAssert(strategy, Objects::nonNull, "invalid strategy type " + config.getStrategyType());
         List<Invitation> invitations = strategy.dispatch(senders, joins, config);
 
-        // NOTE 理论上需要再次校验
         invitationService.batchInsert(invitations);
 
-        return invitations;
-    }
-
-    @Override
-    @Transactional
-    public void dispatch() {
-        StrategyConfig config = configService.getStrategyCfg(true);
-        if (invitationService.countByStatus(config.getProcessId(), InviteStatus.INIT) <= 0) {
-            this.previewDispatch();
-        }
-        // NOTE 理论上需要校验
-        invitationService.updateStatus(config.getProcessId(), InviteStatus.INIT, InviteStatus.NOT_NOTIFY);
-    }
-
-    @Override
-    @Transactional
-    public Result<Boolean> resetDispatch() {
-        StrategyConfig config = configService.getStrategyCfg(true);
-        Integer processId = config.getProcessId();
-        if (invitationService.hasUnsettled(null, processId)) {
-            return Result.fromResp(RespCode.ALL_UNSETTLED);
-        }
-        // 删除所有的
-        invitationService.clean(new Invitation().setProcessId(processId));
-        return Result.success(true);
+        return Result.builder(true).success();
     }
 
 }

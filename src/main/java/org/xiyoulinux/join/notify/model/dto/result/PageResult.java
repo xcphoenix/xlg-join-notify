@@ -1,7 +1,8 @@
-package org.xiyoulinux.join.notify.model.dto;
+package org.xiyoulinux.join.notify.model.dto.result;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -11,8 +12,9 @@ import java.util.List;
  * @version 1.0
  * @date 2020/11/15 下午2:19
  */
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 public class PageResult<T> extends Result<List<T>> {
 
@@ -21,5 +23,14 @@ public class PageResult<T> extends Result<List<T>> {
     private Integer allPage;
     private boolean hasNext;
 
+    public static <E> ResultBuilder<PageResult<E>, List<E>> pageBuilder() {
+        return pageBuilder(null);
+    }
+
+    public static <E> ResultBuilder<PageResult<E>, List<E>> pageBuilder(List<E> data) {
+        ResultBuilder<PageResult<E>, List<E>> resultBuilder = ResultBuilder.wrap(new PageResult<>());
+        resultBuilder.setData(data);
+        return resultBuilder;
+    }
 
 }

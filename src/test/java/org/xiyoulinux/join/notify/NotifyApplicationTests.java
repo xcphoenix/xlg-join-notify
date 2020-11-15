@@ -1,7 +1,7 @@
 package org.xiyoulinux.join.notify;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
@@ -10,20 +10,21 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.xiyoulinux.join.notify.manager.strategy.DispatchStrategy;
 import org.xiyoulinux.join.notify.manager.strategy.StrategyManager;
 import org.xiyoulinux.join.notify.mapper.JoinMapper;
 import org.xiyoulinux.join.notify.mapper.SenderMapper;
-import org.xiyoulinux.join.notify.model.ProcessStatus;
+import org.xiyoulinux.join.notify.model.bo.ProcessStatus;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyType;
 import org.xiyoulinux.join.notify.model.constant.ConfigKeyConst;
-import org.xiyoulinux.join.notify.model.dao.Sender;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
-import org.xiyoulinux.join.notify.model.strategy.StrategyType;
+import org.xiyoulinux.join.notify.model.po.Invitation;
+import org.xiyoulinux.join.notify.model.po.Sender;
 import org.xiyoulinux.join.notify.service.ConfigService;
 import org.xiyoulinux.join.notify.service.DispatchService;
 import org.xiyoulinux.join.notify.service.InvitationService;
@@ -31,6 +32,7 @@ import org.xiyoulinux.join.notify.service.SenderService;
 import org.xiyoulinux.join.notify.utils.SnoUtils;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -68,42 +70,42 @@ class NotifyApplicationTests {
 
     @Test
     void testDispatch() {
-        dispatchService.dispatch();
+        // dispatchService.dispatch();
 
-        // StrategyConfig strategyConfig = new StrategyConfig();
-        // strategyConfig.setStrategyType(StrategyType.MATCH);
-        // strategyConfig.setStrategyData("G:19,18,17|0;M:网络,计科,软件");
-        // strategyConfig.setTimeSegments(Arrays.asList(
-        //         "2020.11.20 - 09:00",
-        //         "2020.11.20 - 09:30",
-        //         "2020.11.20 - 10:00",
-        //         "2020.11.20 - 10:30"
-        // ));
-        // DispatchStrategy dispatchStrategy = strategyManager.getStrategy(strategyConfig.getStrategyType());
-        //
-        // List<Sender> senderList = new ArrayList<>();
-        // senderList.add(new Sender(1L, "xuanc"));
-        // senderList.add(new Sender(2L, "bming"));
-        // senderList.add(new Sender(3L, "cming"));
-        //
-        // log.info("start get list....");
-        // List<Invitation> invitationList = dispatchStrategy.dispatch(
-        //         senderList,
-        //         ToolUtils.pageOperation(
-        //                 (cur, size) -> joinMapper.selectPage(new Page<>(cur, size), null).getRecords()
-        //         ),
-        //         strategyConfig
-        // );
-        // log.info("end get list");
-        // invitationList.forEach(invitation -> {
-        //     log.info("{}\t{}\t{}\t{}\t{}\t{}", invitation.getJoinId(),
-        //             joinMapper.selectById(invitation.getJoinId()).getStudentNo(),
-        //             joinMapper.selectById(invitation.getJoinId()).getCnName(),
-        //             joinMapper.selectById(invitation.getJoinId()).getAdminClass(),
-        //             invitation.getInterviewTime(),
-        //             invitation.getSenderId()
-        //     );
-        // });
+        StrategyConfig strategyConfig = new StrategyConfig();
+        strategyConfig.setStrategyType(StrategyType.MATCH);
+        strategyConfig.setStrategyData("G:19,18,17|0;M:网络,计科,软件");
+        strategyConfig.setTimeSegments(Arrays.asList(
+                "2020.11.20 - 09:00",
+                "2020.11.20 - 09:30",
+                "2020.11.20 - 10:00",
+                "2020.11.20 - 10:30"
+        ));
+        DispatchStrategy dispatchStrategy = strategyManager.getStrategy(strategyConfig.getStrategyType());
+
+        List<Sender> senderList = new ArrayList<>();
+        senderList.add(new Sender(1L, "xuanc"));
+        senderList.add(new Sender(2L, "bming"));
+        senderList.add(new Sender(3L, "cming"));
+
+        log.info("start get list....");
+        List<Invitation> invitationList = dispatchStrategy.dispatch(
+                senderList,
+                ToolUtils.pageOperation(
+                        (cur, size) -> joinMapper.selectPage(new Page<>(cur, size), null).getRecords()
+                ),
+                strategyConfig
+        );
+        log.info("end get list");
+        invitationList.forEach(invitation -> {
+            log.info("{}\t{}\t{}\t{}\t{}\t{}", invitation.getJoinId(),
+                    joinMapper.selectById(invitation.getJoinId()).getStudentNo(),
+                    joinMapper.selectById(invitation.getJoinId()).getCnName(),
+                    joinMapper.selectById(invitation.getJoinId()).getAdminClass(),
+                    invitation.getInterviewTime(),
+                    invitation.getSenderId()
+            );
+        });
     }
 
     @Test
@@ -173,12 +175,6 @@ class NotifyApplicationTests {
         sender.setUsername("xuanc");
         List<Sender> senders = senderMapper.selectList(Wrappers.lambdaQuery(sender));
         log.info(new ObjectMapper().writeValueAsString(senders));
-    }
-
-    @Test
-    @Disabled
-    void testCustomSQL() {
-        Assertions.assertTrue(CollectionUtils.isNotEmpty(invitationService.getUnDispatchJoin(1)));
     }
 
 }

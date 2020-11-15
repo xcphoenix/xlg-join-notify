@@ -2,9 +2,9 @@ package org.xiyoulinux.join.notify.manager.strategy.impl;
 
 import org.springframework.stereotype.Component;
 import org.xiyoulinux.join.notify.manager.strategy.BaseOrderDispatchStrategy;
-import org.xiyoulinux.join.notify.model.dao.Join;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
-import org.xiyoulinux.join.notify.model.strategy.StrategyType;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyType;
+import org.xiyoulinux.join.notify.model.po.Join;
 
 import java.util.ArrayList;
 import java.util.Collections;

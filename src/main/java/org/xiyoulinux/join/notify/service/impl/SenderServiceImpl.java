@@ -6,11 +6,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xiyoulinux.join.notify.mapper.SenderMapper;
-import org.xiyoulinux.join.notify.model.RespCode;
-import org.xiyoulinux.join.notify.model.dao.Invitation;
-import org.xiyoulinux.join.notify.model.dao.Sender;
-import org.xiyoulinux.join.notify.model.dto.Result;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.dto.result.RespCode;
+import org.xiyoulinux.join.notify.model.dto.result.Result;
+import org.xiyoulinux.join.notify.model.po.Invitation;
+import org.xiyoulinux.join.notify.model.po.Sender;
 import org.xiyoulinux.join.notify.service.ConfigService;
 import org.xiyoulinux.join.notify.service.InvitationService;
 import org.xiyoulinux.join.notify.service.SenderService;
@@ -46,20 +46,25 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         if (CollectionUtils.isEmpty(senders)) {
             return false;
         }
+        // 过滤id，防止主键错误
+        senders.forEach(sender -> sender.setId(null));
         return saveBatch(senders);
     }
 
     @Override
     @Transactional
     public Result<Boolean> removeSender(@NonNull Long id) {
+        if (getById(id) == null) {
+            return Result.<Boolean>builder().fromResp(RespCode.SENDER_NOT_EXIST);
+        }
+
         StrategyConfig config = configService.getStrategyCfg(true);
         if (invitationService.hasUnsettled(id, config.getProcessId())) {
-            return Result.fromResp(RespCode.SENDER_UNSETTLED);
+            return Result.<Boolean>builder().fromResp(RespCode.SENDER_UNSETTLED);
         }
-        Invitation rmCondition = new Invitation().setId(id).setProcessId(config.getProcessId());
+        Invitation rmCondition = new Invitation().setSenderId(id).setProcessId(config.getProcessId());
         invitationService.clean(rmCondition);
-        this.removeById(id);
-        return Result.success(true);
+        return Result.builder(this.removeById(id)).success();
     }
 
 }

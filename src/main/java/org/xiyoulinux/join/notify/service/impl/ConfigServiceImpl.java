@@ -8,7 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.xiyoulinux.join.notify.mapper.ConfigMapper;
-import org.xiyoulinux.join.notify.model.dao.Config;
+import org.xiyoulinux.join.notify.model.po.Config;
 import org.xiyoulinux.join.notify.service.ConfigService;
 
 import java.util.Optional;

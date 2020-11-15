@@ -2,8 +2,8 @@ package org.xiyoulinux.join.notify.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sun.istack.internal.NotNull;
-import org.xiyoulinux.join.notify.model.dao.Sender;
-import org.xiyoulinux.join.notify.model.dto.Result;
+import org.xiyoulinux.join.notify.model.po.Sender;
+import org.xiyoulinux.join.notify.model.dto.result.Result;
 
 import java.util.List;
 

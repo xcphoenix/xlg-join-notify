@@ -1,7 +1,6 @@
 package org.xiyoulinux.join.notify.service;
 
-import org.xiyoulinux.join.notify.model.dao.Invitation;
-import org.xiyoulinux.join.notify.model.dto.Result;
+import org.xiyoulinux.join.notify.model.dto.result.Result;
 
 import java.util.List;
 
@@ -16,9 +15,9 @@ import java.util.List;
  */
 public interface DispatchService {
 
-    List<Invitation> previewDispatch();
+    Result<Boolean> preview(List<Long> senders);
 
-    void dispatch();
+    Result<Boolean> dispatch();
 
     Result<Boolean> resetDispatch();
 

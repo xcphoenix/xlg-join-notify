@@ -1,11 +1,11 @@
 package org.xiyoulinux.join.notify.manager.strategy;
 
 import com.sun.istack.internal.NotNull;
-import org.xiyoulinux.join.notify.model.dao.Invitation;
-import org.xiyoulinux.join.notify.model.dao.Join;
-import org.xiyoulinux.join.notify.model.dao.Sender;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
-import org.xiyoulinux.join.notify.model.strategy.StrategyType;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyType;
+import org.xiyoulinux.join.notify.model.po.Invitation;
+import org.xiyoulinux.join.notify.model.po.Join;
+import org.xiyoulinux.join.notify.model.po.Sender;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package org.xiyoulinux.join.notify.service;
 
 import com.sun.istack.internal.NotNull;
 import org.xiyoulinux.join.notify.model.constant.ConfigKeyConst;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
 import java.util.Objects;

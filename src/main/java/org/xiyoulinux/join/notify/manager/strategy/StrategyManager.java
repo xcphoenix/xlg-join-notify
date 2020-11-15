@@ -1,7 +1,7 @@
 package org.xiyoulinux.join.notify.manager.strategy;
 
 import org.springframework.stereotype.Component;
-import org.xiyoulinux.join.notify.model.strategy.StrategyType;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyType;
 import org.xiyoulinux.join.notify.utils.SpringUtils;
 
 import java.util.HashMap;

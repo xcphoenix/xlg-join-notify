@@ -2,11 +2,11 @@ package org.xiyoulinux.join.notify.manager.strategy;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-import org.xiyoulinux.join.notify.model.InviteStatus;
-import org.xiyoulinux.join.notify.model.dao.Invitation;
-import org.xiyoulinux.join.notify.model.dao.Join;
-import org.xiyoulinux.join.notify.model.dao.Sender;
-import org.xiyoulinux.join.notify.model.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.bo.InviteStatus;
+import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
+import org.xiyoulinux.join.notify.model.po.Invitation;
+import org.xiyoulinux.join.notify.model.po.Join;
+import org.xiyoulinux.join.notify.model.po.Sender;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
 import java.util.*;

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.xiyoulinux.join.notify.model.bo.ProcessStatus;
-import org.xiyoulinux.join.notify.model.bo.StrategyType;
 
 import java.util.List;
 
@@ -43,7 +42,8 @@ public class StrategyConfig {
     private String blackRegex;
 
     public boolean checkValid() {
-        return ProcessStatus.fromStatus(getProcessId()) != null && CollectionUtils.isNotEmpty(timeSegments) && strategyType != null;
+        ProcessStatus.fromStatus(getProcessId());
+        return CollectionUtils.isNotEmpty(timeSegments) && strategyType != null;
     }
 
     public void applyBlackRegexes(String ... regexes) {

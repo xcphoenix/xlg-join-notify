@@ -1,4 +1,4 @@
-package org.xiyoulinux.join.notify.model.dao;
+package org.xiyoulinux.join.notify.model.po;
 
 import lombok.Data;
 

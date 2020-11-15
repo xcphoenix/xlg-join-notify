@@ -3,13 +3,15 @@ package org.xiyoulinux.join.notify.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.NonNull;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.xiyoulinux.join.notify.mapper.JoinMapper;
-import org.xiyoulinux.join.notify.model.dao.Join;
+import org.xiyoulinux.join.notify.model.po.Join;
 import org.xiyoulinux.join.notify.service.JoinService;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ public class JoinServiceImpl implements JoinService {
     }
 
     @Override
-    public List<Join> getJoinByProcessId(@NonNull Integer id) {
+    public List<Join> listByProcessId(@NonNull Integer id) {
         return ToolUtils.pageOperation(
                 (cur, size) -> joinMapper.selectPage(
                         new Page<>(cur, size),
@@ -39,6 +41,14 @@ public class JoinServiceImpl implements JoinService {
     @Override
     public Join getJoinById(@NonNull Integer id) {
         return joinMapper.selectById(id);
+    }
+
+    @Override
+    public List<Join> listByIds(List<Integer> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return Collections.emptyList();
+        }
+        return joinMapper.selectBatchIds(idList);
     }
 
     @Override
