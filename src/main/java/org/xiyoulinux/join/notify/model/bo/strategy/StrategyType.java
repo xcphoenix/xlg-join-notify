@@ -1,4 +1,4 @@
-package org.xiyoulinux.join.notify.model.strategy;
+package org.xiyoulinux.join.notify.model.bo.strategy;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;

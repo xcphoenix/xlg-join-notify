@@ -23,4 +23,13 @@ public enum ProcessStatus {
         this.status = status;
     }
 
+    public static ProcessStatus fromStatus(Integer status) {
+        for (ProcessStatus processStatus : ProcessStatus.values()) {
+            if (processStatus.getStatus() == status) {
+                return processStatus;
+            }
+        }
+        return null;
+    }
+
 }

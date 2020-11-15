@@ -1,0 +1,1 @@
+package org.xiyoulinux.join.notify.model;

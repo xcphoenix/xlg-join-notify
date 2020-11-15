@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.xiyoulinux.join.notify.model.InviteStatus;
+import org.xiyoulinux.join.notify.model.bo.InviteStatus;
 
 /**
  * 面试邀请

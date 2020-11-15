@@ -1,29 +1,18 @@
 package org.xiyoulinux.join.notify.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.xiyoulinux.join.notify.model.RespCode;
-
 /**
  * @author xuanc
  * @version 1.0
- * @date 2020/11/8 下午2:31
+ * @date 2020/11/15 下午4:32
  */
-@Data
-@AllArgsConstructor
-public class Result<T> {
+public class ResultBuilder {
 
-    private String code;
-    private String message;
-    private boolean success;
-    private T data;
-
-    public static <E> Result<E> fromResp(RespCode respCode) {
-        return fromResp(respCode, null);
+    public static <R extends Result<?>> R fromResp(RespCode respCode) {
+        return (R) fromResp(respCode, null);
     }
 
-    public static <E> Result<E> fromResp(RespCode respCode, E data) {
-        return new Result<>(respCode.getCode(), respCode.getMessage(), respCode.isSuccess(), data);
+    public static <R extends Result<T>, T> R fromResp(RespCode respCode, T data) {
+        return (R) new Result<>(respCode.getCode(), respCode.getMessage(), respCode.isSuccess(), data);
     }
 
     public static <E> Result<E> success(String code, String message, E data) {
