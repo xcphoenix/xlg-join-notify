@@ -17,33 +17,36 @@ public enum InviteStatus {
     /**
      * 初始状态
      */
-    INIT(-1),
+    INIT(-1, "初始状态"),
     /**
      * 未通知，初始状态
      */
-    NOT_NOTIFY(0),
+    NOT_NOTIFY(0, "未通知"),
     /**
      * 待确认
      */
-    TO_BE_CONFIRM(1),
+    TO_BE_CONFIRM(1, "待确认"),
     /**
      * 有异议
      */
-    DISSENT(2),
+    DISSENT(2, "有异议"),
     /**
      * 已接受
      */
-    APPLY(3),
+    APPLY(3, "已接受"),
     /**
      * 已拒绝
      */
-    REFUSED(4);
+    REFUSED(4, "已拒绝");
 
     @EnumValue
     private final int type;
 
-    InviteStatus(int type) {
+    private final String desc;
+
+    InviteStatus(int type, String desc) {
         this.type = type;
+        this.desc = desc;
     }
 
     public static List<InviteStatus> unDealStatus() {

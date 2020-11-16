@@ -3,6 +3,8 @@ package org.xiyoulinux.join.notify.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
+import lombok.NonNull;
+import org.xiyoulinux.join.notify.model.bo.InvitationDetail;
 import org.xiyoulinux.join.notify.model.bo.InviteStatus;
 import org.xiyoulinux.join.notify.model.dto.result.PageResult;
 import org.xiyoulinux.join.notify.model.po.Invitation;
@@ -19,7 +21,15 @@ public interface InvitationService extends IService<Invitation> {
 
     boolean batchInsert(List<Invitation> invitationList);
 
-    PageResult<Invitation> getInvitation(@NotNull Invitation condition, int pageNum, int pageSize);
+    /**
+     * 获取邀请详情
+     *
+     * @param condition 不能为空，应当指定流程 id
+     * @param pageNum 页数
+     * @param pageSize 每页大小
+     * @return 邀请详情，以及报名记录
+     */
+    PageResult<InvitationDetail> getInvitation(@NotNull Invitation condition, int pageNum, int pageSize);
 
     /**
      * 获取未分配邀请的报名记录
@@ -45,6 +55,8 @@ public interface InvitationService extends IService<Invitation> {
     boolean hasUnsettled(@Nullable Long senderId, @NotNull Integer processId);
 
     int countByStatus(@NotNull Integer processId, @NotNull InviteStatus status);
+
+    List<String> groupByTime(@NonNull Integer processId);
 
     boolean clean(@NotNull Invitation condition);
 

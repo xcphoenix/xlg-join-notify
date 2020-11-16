@@ -8,14 +8,18 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.xiyoulinux.join.notify.mapper.InvitationMapper;
+import org.xiyoulinux.join.notify.model.bo.InvitationDetail;
 import org.xiyoulinux.join.notify.model.bo.InviteStatus;
 import org.xiyoulinux.join.notify.model.dto.result.PageResult;
 import org.xiyoulinux.join.notify.model.po.Invitation;
 import org.xiyoulinux.join.notify.model.po.Join;
 import org.xiyoulinux.join.notify.service.InvitationService;
+import org.xiyoulinux.join.notify.service.JoinService;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author xuanc
@@ -28,8 +32,11 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
 
     private final InvitationMapper invitationMapper;
 
-    public InvitationServiceImpl(InvitationMapper invitationMapper) {
+    private final JoinService joinService;
+
+    public InvitationServiceImpl(InvitationMapper invitationMapper, JoinService joinService) {
         this.invitationMapper = invitationMapper;
+        this.joinService = joinService;
     }
 
     @Override
@@ -41,12 +48,23 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
     }
 
     @Override
-    public PageResult<Invitation> getInvitation(@NonNull Invitation condition, int pageNum, int pageSize) {
+    public PageResult<InvitationDetail> getInvitation(@NonNull Invitation condition, int pageNum, int pageSize) {
         Page<Invitation> page = page(new Page<>(pageNum, pageSize), Wrappers.lambdaQuery(condition));
-        return PageResult.pageBuilder(page.getRecords())
+        final List<Invitation> invitationList = page.getRecords();
+        final List<Integer> joinIds = invitationList.stream().map(Invitation::getJoinId).collect(Collectors.toList());
+        final List<Join> joins = joinService.listByIds(joinIds);
+        Map<Integer, Join> id2Join = joins.stream().collect(Collectors.toMap(Join::getId, join -> join));
+
+        List<InvitationDetail> invitationDetails = invitationList.stream()
+                .map(InvitationDetail::new)
+                .peek(inDetail -> inDetail.setJoin(id2Join.get(inDetail.getInvitation().getJoinId())))
+                .collect(Collectors.toList());
+
+        return PageResult.pageBuilder(invitationDetails)
                 .success()
                 .setTotal(page.getTotal())
                 .setCurPage(pageNum)
+                .setAllPage((int) Math.ceil(1.0 * page.getTotal() / pageSize))
                 .setHasNext(page.hasNext());
     }
 
@@ -109,10 +127,18 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
     }
 
     @Override
+    public List<String> groupByTime(@NonNull Integer processId) {
+        return list(
+                Wrappers.<Invitation>lambdaQuery()
+                        .select(Invitation::getInterviewTime)
+                        .eq(Invitation::getProcessId, processId)
+                        .groupBy(Invitation::getInterviewTime)
+        ).stream().map(Invitation::getInterviewTime).collect(Collectors.toList());
+    }
+
+    @Override
     public boolean clean(@NonNull Invitation condition) {
-        return remove(
-                Wrappers.lambdaQuery(condition)
-        );
+        return remove(Wrappers.lambdaQuery(condition));
     }
 
 }
