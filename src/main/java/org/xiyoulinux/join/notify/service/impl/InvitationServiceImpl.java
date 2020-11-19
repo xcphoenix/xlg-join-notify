@@ -55,6 +55,8 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
 
     @Override
     public PageResult<InvitationDetail> getInvitation(@NonNull Invitation condition, int pageNum, int pageSize) {
+        validPageParam(pageNum, pageSize);
+
         Page<Invitation> page = page(new Page<>(pageNum, pageSize), Wrappers.lambdaQuery(condition));
         final List<Invitation> invitationList = page.getRecords();
 
@@ -82,6 +84,8 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
 
     @Override
     public PageResult<Join> getUnDispatchJoin(@NonNull Integer processId, int pageNum, int pageSize) {
+        validPageParam(pageNum, pageSize);
+
         final long pageStart = (pageNum - 1) * pageSize;
         final long total = invitationMapper.countUnDispatchJoin(processId);
         if (total <= 0) {
@@ -151,6 +155,11 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
     @Override
     public boolean clean(@NonNull Invitation condition) {
         return remove(Wrappers.lambdaQuery(condition));
+    }
+
+    private void validPageParam(int pageNum, int pageSize) {
+        ToolUtils.argAssert(pageNum, e -> e > 0, "页数非法");
+        ToolUtils.argAssert(pageSize, e -> e > 0, "分页大小非法");
     }
 
 }

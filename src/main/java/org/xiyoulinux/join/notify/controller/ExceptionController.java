@@ -8,6 +8,7 @@ import org.xiyoulinux.join.notify.model.dto.result.RespCode;
 import org.xiyoulinux.join.notify.model.dto.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * @author xuanc
@@ -30,7 +31,7 @@ public class ExceptionController {
                 request.getRequestURI(),
                 request.getMethod(),
                 ex.getClass().getSimpleName(),
-                ex.getCause().getMessage()
+                Optional.ofNullable(ex.getCause()).map(Throwable::getMessage).orElse("")
         );
         log.error(ex);
         return Result.builder(ex.getClass().getSimpleName()).fromResp(RespCode.FAILURE);
