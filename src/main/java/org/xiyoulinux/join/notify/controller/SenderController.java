@@ -6,6 +6,7 @@ import org.xiyoulinux.join.notify.model.dto.result.PageResult;
 import org.xiyoulinux.join.notify.model.dto.result.RespCode;
 import org.xiyoulinux.join.notify.model.dto.result.Result;
 import org.xiyoulinux.join.notify.model.po.Sender;
+import org.xiyoulinux.join.notify.model.vo.JoinVO;
 import org.xiyoulinux.join.notify.service.SenderService;
 
 import java.util.List;
@@ -47,6 +48,11 @@ public class SenderController {
     @DeleteMapping("/sender/{id}")
     public Result<Boolean> delSender(@PathVariable("id") Long id) {
         return senderService.removeSender(id);
+    }
+
+    @GetMapping("/sender/joins")
+    public List<JoinVO> getSenderJoins(@RequestParam("name") String username) {
+        return senderService.getJoinListBySenderName(username);
     }
 
 }

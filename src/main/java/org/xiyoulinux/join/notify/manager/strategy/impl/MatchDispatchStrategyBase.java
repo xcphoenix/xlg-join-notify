@@ -1,6 +1,6 @@
 package org.xiyoulinux.join.notify.manager.strategy.impl;
 
-import com.sun.istack.internal.Nullable;
+import com.sun.istack.Nullable;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;

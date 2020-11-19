@@ -1,6 +1,6 @@
 package org.xiyoulinux.join.notify.manager.strategy;
 
-import com.sun.istack.internal.NotNull;
+import com.sun.istack.NotNull;
 import org.xiyoulinux.join.notify.model.bo.strategy.StrategyConfig;
 import org.xiyoulinux.join.notify.model.bo.strategy.StrategyType;
 import org.xiyoulinux.join.notify.model.po.Invitation;

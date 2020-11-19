@@ -14,7 +14,7 @@ import org.xiyoulinux.join.notify.service.ConfigService;
  * @date 2020/11/14 下午9:36
  */
 @RestController
-@RequestMapping("config/strategy")
+@RequestMapping("/config")
 public class StrategyConfigController {
 
     private final ConfigService configService;
@@ -26,7 +26,7 @@ public class StrategyConfigController {
     /**
      * 获取配置
      */
-    @GetMapping("/")
+    @GetMapping("/strategy")
     public Result<StrategyConfigVO> getStrategyConfig() {
         StrategyConfig config = configService.getStrategyCfg(false);
         if (config == null) {
@@ -39,7 +39,7 @@ public class StrategyConfigController {
     /**
      * 更新配置
      */
-    @PostMapping("/")
+    @PostMapping("/strategy")
     public Result<Void> updateStrategyConfig(@RequestBody StrategyConfigVO config) {
         if (config == null) {
             return Result.<Void>builder().fromResp(RespCode.CONFIG_INVALID);

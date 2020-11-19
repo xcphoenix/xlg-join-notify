@@ -13,10 +13,13 @@ import org.xiyoulinux.join.notify.model.bo.InviteStatus;
 import org.xiyoulinux.join.notify.model.dto.result.PageResult;
 import org.xiyoulinux.join.notify.model.po.Invitation;
 import org.xiyoulinux.join.notify.model.po.Join;
+import org.xiyoulinux.join.notify.model.po.Sender;
 import org.xiyoulinux.join.notify.service.InvitationService;
 import org.xiyoulinux.join.notify.service.JoinService;
+import org.xiyoulinux.join.notify.service.SenderService;
 import org.xiyoulinux.join.notify.utils.ToolUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +36,9 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
     private final InvitationMapper invitationMapper;
 
     private final JoinService joinService;
+
+    @Resource
+    private SenderService senderService;
 
     public InvitationServiceImpl(InvitationMapper invitationMapper, JoinService joinService) {
         this.invitationMapper = invitationMapper;
@@ -51,13 +57,19 @@ public class InvitationServiceImpl extends ServiceImpl<InvitationMapper, Invitat
     public PageResult<InvitationDetail> getInvitation(@NonNull Invitation condition, int pageNum, int pageSize) {
         Page<Invitation> page = page(new Page<>(pageNum, pageSize), Wrappers.lambdaQuery(condition));
         final List<Invitation> invitationList = page.getRecords();
+
         final List<Integer> joinIds = invitationList.stream().map(Invitation::getJoinId).collect(Collectors.toList());
         final List<Join> joins = joinService.listByIds(joinIds);
         Map<Integer, Join> id2Join = joins.stream().collect(Collectors.toMap(Join::getId, join -> join));
 
+        final List<Long> senderId = invitationList.stream().map(Invitation::getSenderId).collect(Collectors.toList());
+        final List<Sender> senders = senderService.listByIds(senderId);
+        Map<Long, Sender> id2Sender = senders.stream().collect(Collectors.toMap(Sender::getId, sender -> sender));
+
         List<InvitationDetail> invitationDetails = invitationList.stream()
                 .map(InvitationDetail::new)
                 .peek(inDetail -> inDetail.setJoin(id2Join.get(inDetail.getInvitation().getJoinId())))
+                .peek(inDetail -> inDetail.setSender(id2Sender.get(inDetail.getInvitation().getSenderId())))
                 .collect(Collectors.toList());
 
         return PageResult.pageBuilder(invitationDetails)

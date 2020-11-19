@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.xiyoulinux.join.notify.model.po.Invitation;
 import org.xiyoulinux.join.notify.model.po.Join;
+import org.xiyoulinux.join.notify.model.po.Sender;
 
 /**
  *
@@ -18,6 +19,8 @@ public class InvitationDetail {
     private Invitation invitation;
 
     private Join join;
+
+    private Sender sender;
 
     public InvitationDetail(Invitation invitation) {
         this.invitation = invitation;

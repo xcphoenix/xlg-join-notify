@@ -70,7 +70,10 @@ public abstract class BaseOrderDispatchStrategy implements DispatchStrategy {
         int remain = sourceData.size() % dispatchData.size();
 
         for (int i = 0, j = 0; i < dispatchData.size(); i++) {
-            int dispatchNum = dispatchAvgSize + remain / (i + 1);
+            int dispatchNum = dispatchAvgSize;
+            if (i < remain) {
+                dispatchNum++;
+            }
             for (int k = 0; k < dispatchNum && j < sourceData.size(); k++, j++) {
                 dispatchAction.accept(dispatchData.get(i), sourceData.get(j));
             }

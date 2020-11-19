@@ -1,9 +1,10 @@
 package org.xiyoulinux.join.notify.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sun.istack.internal.NotNull;
-import org.xiyoulinux.join.notify.model.po.Sender;
+import com.sun.istack.NotNull;
 import org.xiyoulinux.join.notify.model.dto.result.Result;
+import org.xiyoulinux.join.notify.model.po.Sender;
+import org.xiyoulinux.join.notify.model.vo.JoinVO;
 
 import java.util.List;
 
@@ -36,5 +37,13 @@ public interface SenderService extends IService<Sender> {
      * @return op status
      */
     Result<Boolean> removeSender(@NotNull Long id);
+
+    /**
+     * FIXME 注意此处没有以学号或者id来标识发送者，未来可能会存在问题
+     *
+     * @param senderName 发送者名字
+     * @return 发送者负责的用户列表
+     */
+    List<JoinVO> getJoinListBySenderName(String senderName);
 
 }

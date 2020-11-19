@@ -1,8 +1,8 @@
 package org.xiyoulinux.join.notify.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import com.sun.istack.NotNull;
+import com.sun.istack.Nullable;
 import lombok.NonNull;
 import org.xiyoulinux.join.notify.model.bo.InvitationDetail;
 import org.xiyoulinux.join.notify.model.bo.InviteStatus;

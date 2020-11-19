@@ -1,6 +1,6 @@
 package org.xiyoulinux.join.notify.service;
 
-import com.sun.istack.internal.NotNull;
+import com.sun.istack.NotNull;
 import org.xiyoulinux.join.notify.model.po.Join;
 
 import java.util.List;
